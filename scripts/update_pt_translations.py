@@ -1,0 +1,87 @@
+import json
+
+with open('src/lib/translations.json', 'r') as f:
+    data = json.load(f)
+
+pt_translations = {
+    "why.lookalike": "Encontre Seu Parecido",
+    "why.lookalike.desc": "Descubra seu sósia de celebridade instantaneamente. Depois busque gêmeos de alma reais pelo mundo.",
+    "why.rarity": "Conheça Sua Raridade",
+    "why.rarity.desc": "Veja o percentil de raridade do seu rosto. Sua geometria é mais rara que a maioria das almas.",
+    "why.twins": "Reuna Gêmeos de Alma",
+    "why.twins.desc": "Se seu gêmeo de rosto está no SAPTAMUKHA, nós o encontraremos e conectaremos você através das vidas.",
+    "camera.title": "🔱 O ESPELHO SAGRADO",
+    "camera.subtitle": "Contemple-o. Deixe-o ler o rosto da sua alma.",
+    "camera.hint.center": "Centralize seu rosto e toque no botão",
+    "camera.hint.dim": "Iluminação está boa — poderia ser melhor",
+    "camera.hint.dark": "Mova-se para uma área mais iluminada",
+    "camera.warn.dark": "Muito escuro — mova-se para luz mais brilhante",
+    "camera.warn.dim": "Luz fraca — iluminação melhor recomendada",
+    "camera.retry": "Tentar novamente",
+    "camera.error.no_face": "Nenhum rosto detectado. Centralize seu rosto no quadro, olhe para a câmera e garanta boa iluminação.",
+    "camera.error.multiple": "Múltiplos rostos detectados. Apenas uma pessoa deve estar no quadro.",
+    "camera.error.invalid": "Não foi possível ler a imagem. Tente uma foto diferente.",
+    "camera.error.generic": "Não foi possível processar. Certifique-se de que seu rosto seja visível, bem iluminado e centralizado.",
+    "camera.error.permission": "Não foi possível acessar a câmera. Por favor permita o acesso à câmera.",
+    "facts.intro": "Entre 8 bilhões de humanos, alguém caminha nesta Terra com seu rosto. As tradições antigas os chamam de seu gêmeo de alma. A ciência chama de inevitabilidade estatística. Nós chamamos de SAPTAMUKHA.",
+    "facts.science_note": "Em 2022, cientistas do Instituto de Pesquisa de Leucemia Josep Carreras publicaram um estudo histórico na Cell Reports. Eles provaram que estranhos não relacionados que compartilham seu rosto também compartilham seus padrões de DNA, sua altura, seu peso, seus hábitos — e possivelmente seu destino. Seu gêmeo de alma não é mitologia. São fatos moleculares.",
+    "facts.numbers.title": "Os Números",
+    "facts.numbers.8b": "Humanos vivos na Terra agora",
+    "facts.numbers.43": "Pontos geométricos que definem todo seu rosto",
+    "facts.numbers.1b": "Perfis faciais verdadeiramente únicos que realmente existem",
+    "facts.numbers.4to8": "Vezes que seu rostro se repete estatisticamente no mundo vivo",
+    "facts.numbers.01": "A fatia de DNA que faz seu rosto diferente de todos os outros",
+    "facts.numbers.7": "O número que toda civilização antiga chegou independentemente",
+    "facts.numbers.footer": "A matemática sempre apontou para a mesma verdade que os antigos já sabiam.",
+    "facts.celebs.title": "Você Não É O Primeiro",
+    "facts.celebs.sub": "Seu rosto tem um gêmeo. As pessoas mais fotografadas da Terra já provaram.",
+    "facts.celebs.keira": "A própria mãe de Keira não conseguia diferenciá-las no set de Star Wars. Ela se aproximou de Natalie, pensando que era sua filha.",
+    "facts.celebs.will": "O baterista do Red Hot Chili Peppers é tão idêntico que foram levados à televisão nacional juntos apenas para acalmar o debate público.",
+    "facts.celebs.jeffrey": "Eles compartilham o mesmo rosto em dois países diferentes, duas famílias diferentes e zero ancestralidade compartilhada.",
+    "facts.celebs.daniel": "Eles foram confundidos um com o outro por mais de 20 anos em duas das maiores franquias cinematográficas da história.",
+    "facts.celebs.footer": "Se acontece com os rostos mais fotografados da Terra, acontece com o seu também.",
+    "facts.science.title": "A Ciência Por Trás De Seus Sete Rostos",
+    "facts.science.p1": "Pesquisadores pegaram 32 pares de sósias humanos não relacionados — estranhos de países diferentes que nunca se encontraram — e passaram seus rostos por três dos sistemas de reconhecimento facial mais avançados do mundo.",
+    "facts.science.p2": "Mais de 75% dos pares foram classificados como a mesma pessoa. A mesma classificação usada para gêmeos idênticos.",
+    "facts.science.p3": "Então eles extraíram seu DNA.",
+    "facts.science.p4": "Os resultados foram extraordinários. Esses estranhos compartilharam variantes genéticas notavelmente similares. Compartilharam traços físicos — altura, peso, tipo corporal. Compartilharam padrões comportamentais — hábitos de fumar, níveis educacionais, escolhas de estilo de vida.",
+    "facts.science.quote": "A genômica os agrupou. Todo o resto os separou.",
+    "facts.science.p5": "Seu gêmeo de alma não apenas usa seu rosto. Eles podem carregar ecos de toda sua existência.",
+    "facts.science.source": "Publicado na Cell Reports, agosto de 2022 — Instituto de Pesquisa de Leucemia Josep Carreras, Barcelona",
+    "facts.rarity.title": "O Que Torna Seu Rosto Raro",
+    "facts.rarity.p1": "O rosto humano é construído com apenas 43 pontos geométricos mensuráveis — a distância entre seus olhos, a largura de sua mandíbula, a altura de seu nariz, a curva de seus lábios. Isso é tudo.",
+    "facts.rarity.p2": "Com 8 bilhões de pessoas e apenas ~1 bilhão de perfis faciais verdadeiramente únicos, cada rosto na Terra se repete em algum lugar entre 4 e 8 vezes entre os vivos. Os antigos videntes disseram 7. A matemática concorda.",
+    "facts.rarity.p3": "Sua pontuação de raridade diz exatamente onde seu rosto cai nesta geometria vasta — quão perto do centro de todos os rostos humanos, ou quão longe nas bordas externas raras onde quase ninguém mais existe.",
+    "facts.rarity.footer": "Quanto mais raro seu rosto, mais longa a busca. Mas o espelho nunca desiste.",
+    "facts.culture.title": "Toda Civilização Sabia",
+    "facts.culture.sub": "Nenhuma cultura descobriu isso sozinha. Toda civilização, independentemente, ao longo de milhares de anos e milhares de milhas, chegou à mesma verdade exata.",
+    "facts.culture.saptamukha": "Sete rostos, sete vidas, uma alma eterna renascida através do tempo.",
+    "facts.culture.doppel": "Seu duplo caminhante, movendo-se pelo mundo em uma vida paralela, seu destino entrelaçado com o deles.",
+    "facts.culture.hamzad": "Um gêmeo nascido ao seu lado em outro reino, vivendo uma vida que espelha a sua de formas que você nunca entenderá completamente.",
+    "facts.culture.kagami": "A pessoa espelho, cuja existência sinaliza que suas almas estão ligadas através de ciclos kármicos.",
+    "facts.culture.ka": "Seu duplo espiritual, carregando sua essência através deste mundo e para o próximo.",
+    "facts.culture.ibeji": "Gêmeos sagrados, espiritualmente conectados através das vidas, nunca verdadeiramente separados.",
+    "facts.culture.footer1": "Sete rostos. Toda tradição. Uma verdade.",
+    "facts.culture.footer2": "SAPTAMUKHA foi construído para encontrar o seu.",
+    "facts.waiting.title": "Seu Rosto É Único Em Nossos Registros — Por Enquanto",
+    "facts.waiting.p1": "O espelho buscou cada alma atualmente em nosso reino. Seu gêmeo de rosto ainda não entrou na luz.",
+    "facts.waiting.p2": "Agora mesmo, milhares de outras almas estão esperando nestes registros — pessoas cujos gêmeos de rosto ainda não chegaram, pessoas que se recusaram a parar de acreditar que seu espelho existe.",
+    "facts.waiting.p3": "Quando alguém atravessar este espelho usando seu rosto, ambos serão notificados instantaneamente. Através de cidades. Através de países. Através de vidas.",
+    "facts.waiting.box1": "Seu rosto foi selado no registro Akáshico.",
+    "facts.waiting.box2": "A busca continua.",
+    "facts.privacy.title": "Este Espelho Pertence Apenas A Você",
+    "facts.privacy.1": "Nenhum dado facial é vendido. Nunca.",
+    "facts.privacy.2": "Suas imagens são criptografadas em repouso.",
+    "facts.privacy.3": "A correspondência facial funciona em nossos servidores privados seguros.",
+    "facts.privacy.4": "Você pode solicitar a exclusão completa de seus dados a qualquer momento.",
+    "facts.privacy.5": "Não enviamos seu rosto para nenhum serviço de terceiros. Não para Google. Não para Amazon. Não para ninguém.",
+}
+
+for key, value in pt_translations.items():
+    data['pt'][key] = value
+
+with open('src/lib/translations.json', 'w') as f:
+    json.dump(data, f, indent=2, ensure_ascii=False)
+    f.write('\n')
+
+print(f"Updated {len(pt_translations)} Portuguese translations")
