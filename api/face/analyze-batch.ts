@@ -6,6 +6,8 @@ const HF_SPACE_URL = 'https://sivamarwar-saptamukha.hf.space';
 const HF_TOKEN = process.env.HF_TOKEN;
 
 export default async function handler(request: Request) {
+  const traceId = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+  const tokenPresent = Boolean(HF_TOKEN);
   // Handle CORS preflight
   if (request.method === 'OPTIONS') {
     return new Response(null, {
@@ -25,17 +27,18 @@ export default async function handler(request: Request) {
       status: 405,
       headers: { 
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
+        'Access-Control-Allow-Origin': '*',
+        'x-saptamukha-trace-id': traceId
       }
     });
   }
 
   try {
-    console.log(`[Edge Function] POST /api/face/analyze-batch`);
-
+    // #region debug-point A:request-entry
     const headers: Record<string, string> = {
       'Authorization': `Bearer ${HF_TOKEN}`
     };
+    // #endregion
 
     // Forward the request to Hugging Face
     const hfResponse = await fetch(`${HF_SPACE_URL}/analyze-batch`, {
@@ -44,19 +47,23 @@ export default async function handler(request: Request) {
       body: request.body
     });
 
-    console.log(`[Edge Function] HF Response: ${hfResponse.status}`);
-
     if (!hfResponse.ok) {
       const errorText = await hfResponse.text();
-      console.error(`[Edge Function] HF Error:`, errorText.substring(0, 500));
       return new Response(JSON.stringify({ 
         error: 'Face service error', 
-        details: errorText.substring(0, 1000)
+        details: errorText.substring(0, 1000),
+        debug: {
+          traceId,
+          upstreamStatus: hfResponse.status,
+          tokenPresent
+        }
       }), {
         status: hfResponse.status,
         headers: { 
           'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
+          'Access-Control-Allow-Origin': '*',
+          'x-saptamukha-trace-id': traceId,
+          'x-saptamukha-hf-token': tokenPresent ? 'present' : 'missing'
         }
       });
     }
@@ -69,20 +76,27 @@ export default async function handler(request: Request) {
       status: 200,
       headers: { 
         'Content-Type': contentType,
-        'Access-Control-Allow-Origin': '*'
+        'Access-Control-Allow-Origin': '*',
+        'x-saptamukha-trace-id': traceId,
+        'x-saptamukha-hf-token': tokenPresent ? 'present' : 'missing'
       }
     });
 
   } catch (error) {
-    console.error(`[Edge Function] Error:`, error);
     return new Response(JSON.stringify({ 
       error: 'Proxy error', 
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? error.message : 'Unknown error',
+      debug: {
+        traceId,
+        tokenPresent
+      }
     }), {
       status: 500,
       headers: { 
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
+        'Access-Control-Allow-Origin': '*',
+        'x-saptamukha-trace-id': traceId,
+        'x-saptamukha-hf-token': tokenPresent ? 'present' : 'missing'
       }
     });
   }
