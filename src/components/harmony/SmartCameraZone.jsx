@@ -260,7 +260,6 @@ export default function SmartCameraZone({
         mediaPipeReady.current = true;
         setMeshReady(true);
         stableRef.current = 0;
-        console.log('[SmartCamera] Mesh active:', viewType);
       }
       // shouldMirror=false because getMirroredFrame already handled the flip
       drawFaceScannerOverlay(ctx, landmarks, canvas.width, canvas.height, 0.85, false, overlayLabelsRef.current);
@@ -298,9 +297,7 @@ export default function SmartCameraZone({
       try {
         const mirrored = getMirroredFrame(video, canvas);
         await meshInstance.send({ image: mirrored });
-      } catch (err) {
-        console.warn('[SmartCamera] Mesh send error:', err);
-      }
+      } catch (err) {}
     }
 
     // Throttle face detection to every 3rd frame (tasks 2 & 3)
@@ -333,7 +330,6 @@ export default function SmartCameraZone({
           const pose = estimatePosePnP(landmarks, video.videoWidth, video.videoHeight);
           // Flip yaw because video is mirrored (scale-x-[-1])
           const flippedPose = { ...pose, yaw: -pose.yaw };
-          console.log(`[pose] yaw:${flippedPose.yaw.toFixed(1)} pitch:${flippedPose.pitch.toFixed(1)} roll:${flippedPose.roll.toFixed(1)} view:${viewType}`);
 
           const guidance = getPoseGuidance(viewType, flippedPose, box, video.videoWidth, video.videoHeight, t);
           if (guidance.needsAdjustment) {
@@ -439,7 +435,6 @@ export default function SmartCameraZone({
       await loadFaceApiModels();
 
       if (isMeshPreloaded()) {
-        console.log('[SmartCamera] Mesh preloaded — ready for', viewType);
         mediaPipeReady.current = true;
         setMeshReady(true);
         setHudText(t('harmony.status.ready'));
@@ -455,8 +450,7 @@ export default function SmartCameraZone({
       lastBoxRef.current = null;
       rafRef.current = requestAnimationFrame(detectLoop);
     } catch (err) {
-      if (err.name === 'AbortError') { console.warn('[SmartCamera] Camera start aborted'); }
-      else { console.error('[SmartCamera] Camera start failed', err); setStatus('error'); setHudText(t('harmony.status.camera_unavailable')); setHudColor('#ff5454'); }
+      if (err.name !== 'AbortError') { setStatus('error'); setHudText(t('harmony.status.camera_unavailable')); setHudColor('#ff5454'); }
       activeRef.current = false;
       stopCamera();
     } finally {
