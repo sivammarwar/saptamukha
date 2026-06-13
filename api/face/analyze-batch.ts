@@ -8,6 +8,8 @@ const HF_TOKEN = process.env.HF_TOKEN;
 export default async function handler(request: Request) {
   const traceId = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
   const tokenPresent = Boolean(HF_TOKEN);
+  const incomingApiKey = request.headers.get('x-api-key') || process.env.EMBED_API_KEY || '';
+  const incomingContentType = request.headers.get('content-type') || '';
   // Handle CORS preflight
   if (request.method === 'OPTIONS') {
     return new Response(null, {
@@ -38,6 +40,8 @@ export default async function handler(request: Request) {
     const headers: Record<string, string> = {
       'Authorization': `Bearer ${HF_TOKEN}`
     };
+    if (incomingApiKey) headers['X-API-Key'] = incomingApiKey;
+    if (incomingContentType) headers['Content-Type'] = incomingContentType;
     // #endregion
 
     // Forward the request to Hugging Face
@@ -55,7 +59,8 @@ export default async function handler(request: Request) {
         debug: {
           traceId,
           upstreamStatus: hfResponse.status,
-          tokenPresent
+          tokenPresent,
+          apiKeyForwarded: Boolean(incomingApiKey)
         }
       }), {
         status: hfResponse.status,

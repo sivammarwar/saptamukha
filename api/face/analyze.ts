@@ -1,53 +1,82 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
+export const config = {
+  runtime: 'edge',
+};
 
 const HF_SPACE_URL = 'https://sivamarwar-saptamukha.hf.space';
 const HF_TOKEN = process.env.HF_TOKEN;
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
-  if (req.method === 'OPTIONS') {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-API-Key, Authorization');
-    return res.status(204).end();
+export default async function handler(request: Request) {
+  if (request.method === 'OPTIONS') {
+    return new Response(null, {
+      status: 204,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, X-API-Key, Authorization'
+      }
+    });
   }
 
-  if (req.method !== 'POST') {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    return res.status(405).json({ error: 'Method not allowed' });
+  if (request.method !== 'POST') {
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+      status: 405,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      }
+    });
   }
 
   try {
+    const incomingApiKey = request.headers.get('x-api-key') || process.env.EMBED_API_KEY || '';
+    const incomingContentType = request.headers.get('content-type') || '';
     const headers: Record<string, string> = {
       'Authorization': `Bearer ${HF_TOKEN}`
     };
+    if (incomingApiKey) headers['X-API-Key'] = incomingApiKey;
+    if (incomingContentType) headers['Content-Type'] = incomingContentType;
 
     const hfResponse = await fetch(`${HF_SPACE_URL}/analyze`, {
       method: 'POST',
       headers: headers,
-      body: req.body as any
+      body: request.body
     });
 
     if (!hfResponse.ok) {
       const errorText = await hfResponse.text();
-      res.setHeader('Access-Control-Allow-Origin', '*');
-      return res.status(hfResponse.status).json({
+      return new Response(JSON.stringify({
         error: 'Face service error',
         details: errorText.substring(0, 1000)
+      }), {
+        status: hfResponse.status,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        }
       });
     }
 
     const data = await hfResponse.arrayBuffer();
     const contentType = hfResponse.headers.get('content-type') || 'application/json';
 
-    res.setHeader('Content-Type', contentType);
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    return res.status(200).send(Buffer.from(data));
+    return new Response(data, {
+      status: 200,
+      headers: {
+        'Content-Type': contentType,
+        'Access-Control-Allow-Origin': '*'
+      }
+    });
 
   } catch (error) {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    return res.status(500).json({
+    return new Response(JSON.stringify({
       error: 'Proxy error',
       message: error instanceof Error ? error.message : 'Unknown error'
+    }), {
+      status: 500,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      }
     });
   }
 }

@@ -25,8 +25,17 @@
 - This confirms the request reaches the proxy and the proxy reaches the upstream face service.
 
 ## Hypothesis Status
-- H1: Pending verification via deployed `tokenPresent` instrumentation.
-- H2: Plausible.
+- H1: Rejected. Production now reports `x-saptamukha-hf-token: present`.
+- H2: Confirmed. The proxy was not forwarding `x-api-key`, while the Python backend requires it for `/analyze` and `/analyze-batch`.
 - H3: Less likely, but still possible until the new trace-id instrumentation is visible in production.
-- H4: Plausible.
+- H4: Unlikely.
 - H5: Less likely because upstream explicitly returns `unauthorized`, not a multipart/body parse error.
+
+## Root Cause
+- The face-service security middleware checks `request.headers.get("x-api-key", "")` for `/analyze` and `/analyze-batch`.
+- The browser request included `x-api-key`, but the Vercel proxy only forwarded `Authorization: Bearer ${HF_TOKEN}`.
+- Result: Hugging Face request reached the app, but the app returned `401 unauthorized`.
+
+## Fix Applied
+- Forward `X-API-Key` from the incoming request to the upstream face service.
+- Forward `Content-Type` from the incoming request so multipart boundaries remain intact.
