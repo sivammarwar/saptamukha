@@ -3,8 +3,16 @@ export const runtime = 'edge';
 const HF_SPACE_URL = 'https://sivamarwar-saptamukha.hf.space';
 const HF_TOKEN = process.env.HF_TOKEN;
 
+// Handle GET requests - return a simple status check
 export async function GET(request, { params }) {
-  return handleRequest(request, params);
+  return new Response(JSON.stringify({ 
+    status: 'ok', 
+    message: 'Face API proxy is running. Use POST for requests.',
+    timestamp: new Date().toISOString()
+  }), {
+    status: 200,
+    headers: { 'Content-Type': 'application/json' }
+  });
 }
 
 export async function POST(request, { params }) {
@@ -29,15 +37,34 @@ async function handleRequest(request, params) {
       headers: headers
     };
     
+    // Handle multipart form data (file uploads) vs JSON
+    const contentType = request.headers.get('content-type') || '';
     if (request.body) {
-      fetchOptions.body = await request.text();
+      if (contentType.includes('multipart/form-data')) {
+        // For file uploads, pass the body as-is (it's already FormData)
+        fetchOptions.body = request.body;
+        // Don't set Content-Type - browser will set it with boundary
+        delete headers['Content-Type'];
+      } else {
+        // For JSON/text, read as text
+        fetchOptions.body = await request.text();
+      }
     }
     
     const response = await fetch(targetUrl, fetchOptions);
     
     if (!response.ok) {
-      const error = await response.text();
-      return new Response(JSON.stringify({ error: 'Face service error', details: error }), {
+      const errorText = await response.text();
+      console.error(`HF Space error: ${response.status} ${response.statusText}`, {
+        url: targetUrl,
+        status: response.status,
+        error: errorText.substring(0, 500)
+      });
+      return new Response(JSON.stringify({ 
+        error: 'Face service error', 
+        status: response.status,
+        details: errorText.substring(0, 1000)
+      }), {
         status: response.status,
         headers: { 'Content-Type': 'application/json' }
       });
