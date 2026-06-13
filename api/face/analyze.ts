@@ -2,6 +2,10 @@ export const config = {
   runtime: 'edge',
 };
 
+declare const process: {
+  env: Record<string, string | undefined>;
+};
+
 const HF_SPACE_URL = 'https://sivamarwar-saptamukha.hf.space';
 const HF_TOKEN = process.env.HF_TOKEN;
 
